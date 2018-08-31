@@ -45,7 +45,7 @@ function readProduct() {
       
       // console.log(JSON.stringify(results, null, 2)); //test
       
-      buyProduct(results);
+      buyProduct();
     });
   }
 
@@ -86,14 +86,14 @@ function buyProduct(){
         
         // If not enough inventory
         if (databaseResults[0].stock_quantity < result.buy_quantity) { // check inventory
-          console.log("Insufficient Stock. Unable to buy " + result.buy_quantity + " " + databaseResults[0].product_name + "'s.");
-          buyProduct(); // return to buy screen
+          console.log("\nInsufficient Stock. Unable to buy " + result.buy_quantity + " " + databaseResults[0].product_name + "'s.\n");
+          readProduct(); // return to buy screen
 
         // If enough, buy it
         } else {
-          console.log("You successfully purchased " + result.buy_quantity + " " + databaseResults[0].product_name + "'s!");
-          // updateProduct(result.id, result.buy_quantity)
-          buyProduct(); // return to buy screen
+          console.log("\nYou successfully purchased " + result.buy_quantity + " " + databaseResults[0].product_name + "'s!\n");
+          updateProduct(result.id, databaseResults[0].stock_quantity -  result.buy_quantity)
+          readProduct(); // return to buy screen
         }
       }
     )
@@ -101,8 +101,19 @@ function buyProduct(){
 })
 }
 
-function updateProduct(id, quantity){
-
+function updateProduct(id, new_quantity){
+  connection.query(
+    "UPDATE products SET ? WHERE ?",
+    [{
+        stock_quantity: new_quantity
+      },
+      {
+        item_id: id
+      }],
+    function(err, res) {
+      console.log(res.affectedRows + " products updated!\n");
+    }
+  );
 }
 
 // check if input is a number or Q
