@@ -101,6 +101,7 @@ function buyProduct(){
 })
 }
 
+// Updates to new quantity
 function updateProduct(id, new_quantity){
   connection.query(
     "UPDATE products SET ? WHERE ?",
